@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+if [ -f $1/failed ]
+then
+  exit 1
+else
+  echo "--- {}"
+fi

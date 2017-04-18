@@ -30,16 +30,18 @@ arrow "############################################"
 arrow "build ssh dir is #{ssh_dir}"
 ################# Get the key from heroku's environment config #################
 key_file_path = File.join env_dir, 'SSH_KEY'
+key_source = 'SSH_KEY'
 ssh_key = File.open(key_file_path, &:read) if File.exist? key_file_path
 
 if ssh_key.nil?
   key_file_path = File.join env_dir, 'GITHUB_DEPLOY_KEY'
+  key_source = 'GITHUB_DEPLOY_KEY'
   ssh_key = File.open(key_file_path, &:read) if File.exist? key_file_path
 end
 
 if ssh_key.nil?
-  alert "GITHUB_DEPLOY_KEY not set"
-  alert "  Try `heroku config:add GITHUB_DEPLOY_KEY=<your private token>`"
+  alert "SSH_KEY (or GITHUB_DEPLOY_KEY) not set"
+  alert "  Try `heroku config:add SSH_KEY=<your private token>`"
   exit 1
 end
 
@@ -65,10 +67,10 @@ Dir.mktmpdir 'ssh_buidpack' do |dir|
   # clean_host_hash = `cat "#{dir}/host_hash.pub"`
 
   if temp_key.strip == ''
-    alert "SSH_KEY / GITHUB_DEPLOY_KEY was invalid"
+    alert "#{key_source} was invalid"
     exit 1
   else
-    arrow "Using SSH_KEY / GITHUB_DEPLOY_KEY #{fingerprint}"
+    arrow "Using #{key_source} #{fingerprint}"
   end
 
 end
